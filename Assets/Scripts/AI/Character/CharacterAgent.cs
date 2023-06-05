@@ -44,7 +44,10 @@ public class CharacterAgent : CharacterBase
         {
             // have we started moving along the link
             if (OffMeshLinkStatus == EOffmeshLinkStatus.NotStarted)
+            {
                 StartCoroutine(FollowOffmeshLink());
+            }
+                
         }
     }
 
@@ -78,13 +81,16 @@ public class CharacterAgent : CharacterBase
 
     public Vector3 PickLocationInRange(float range)
     {
-        Vector3 searchLocation = transform.position;
+        Vector3 searchLocation = transform.position; 
         searchLocation += Random.Range(-range, range) * Vector3.forward;
         searchLocation += Random.Range(-range, range) * Vector3.right;
 
         NavMeshHit hitResult;
         if (NavMesh.SamplePosition(searchLocation, out hitResult, NearestPointSearchRange, NavMesh.AllAreas))
+        {
             return hitResult.position;
+        }
+            
 
         return transform.position;
     }
