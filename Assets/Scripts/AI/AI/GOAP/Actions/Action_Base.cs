@@ -7,6 +7,7 @@ public abstract class Action_Base : MonoBehaviour
     protected CharacterAgent Agent;
     protected AwarenessSystem Sensors;
     protected EntityInfo Info;
+    protected GOAPBrain AIBrain;
 
     protected Goal_Base LinkedGoal;
     public bool HasFinished { get; protected set; } = false;
@@ -16,6 +17,7 @@ public abstract class Action_Base : MonoBehaviour
     private void Awake()
     {
         Agent = GetComponent<CharacterAgent>();
+        AIBrain = GetComponent<GOAPBrain>();
         Sensors = GetComponent<AwarenessSystem>();
         Initialise();
     }

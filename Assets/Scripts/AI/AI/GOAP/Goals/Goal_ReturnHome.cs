@@ -4,19 +4,21 @@ using UnityEngine;
 
 public class Goal_ReturnHome : Goal_Base
 {
-    [SerializeField] int ItemLimit = 5;
+    
 
     public override void PreTick()
     {
-        if (IsActive)
+
+        //Can return home if inventory is full
+        if (EntityInfo.IsInventoryFull())
         {
-            CanRun = EntityInfo.Inventory[EntityInfo.ItemName.Samples] > ItemLimit;
+            CanRun = true;
+            Priority = MaxPriority;
         }
         else
         {
-            CanRun = EntityInfo.Inventory[EntityInfo.ItemName.Samples] < ItemLimit;
+            CanRun = false;
+            Priority = 0;
         }
-
-        Priority = MaxPriority;
     }
 }

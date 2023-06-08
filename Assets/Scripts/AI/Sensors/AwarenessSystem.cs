@@ -51,7 +51,7 @@ class TrackedTarget
     }
 }
 
-[RequireComponent(typeof(EnemyAI))]
+[RequireComponent(typeof(CharacterAgent))]
 public class AwarenessSystem : MonoBehaviour
 {
     [SerializeField] AnimationCurve VisionSensitivity;
@@ -68,12 +68,12 @@ public class AwarenessSystem : MonoBehaviour
     [SerializeField] float AwarenessDecayRate = 0.1f;
 
     Dictionary<GameObject, TrackedTarget> Targets = new Dictionary<GameObject, TrackedTarget>();
-    EnemyAI LinkedAI;
+    CharacterAgent LinkedAI;
 
     // Start is called before the first frame update
     void Start()
     {
-        LinkedAI = GetComponent<EnemyAI>();
+        LinkedAI = GetComponent<CharacterAgent>();
     }
 
     // Update is called once per frame

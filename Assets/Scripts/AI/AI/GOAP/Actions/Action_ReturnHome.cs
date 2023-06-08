@@ -19,7 +19,7 @@ public class Action_ReturnHome : Action_Base
     }
     public override void OnActivate()
     {
-        Agent.MoveTo(Info.home.GetRandomPointAroundBase());
+        Agent.MoveTo(Info.Home.GetRandomPointAroundBase());
     }
     public override void OnDeactivate()
     {

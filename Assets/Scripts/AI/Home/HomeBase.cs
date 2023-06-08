@@ -12,6 +12,7 @@ public class HomeBase : MonoBehaviour
     public Color ProximityColour = new Color(1f, 1f, 1f, 0.25f);
 
     [SerializeField] float PerfectKnowledgeRange = 100f;
+    [SerializeField] WorldResource.EType DefaultResource = WorldResource.EType.Samples;
     Dictionary<WorldResource.EType, List<WorldResource>> TrackedResources = null;
     Dictionary<WorldResource.EType, int> ResourcesStored = new Dictionary<WorldResource.EType, int>();
     public int NumAvailableResources { get; private set; } = 0;
@@ -61,6 +62,14 @@ public class HomeBase : MonoBehaviour
             NumAvailableResources += TrackedResources[type].Count;
         }
     }
+
+    //public WorldResource GetGatherTarget(GOAPBrain AIBrain)
+    //{
+    //    WorldResource.EType targetResource = DefaultResource;
+
+    //    //find the closest resource to us
+        
+    //}
 
     public void SawResource(WorldResource resource)
     {

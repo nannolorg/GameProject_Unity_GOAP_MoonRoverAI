@@ -4,13 +4,27 @@ using UnityEngine;
 
 public class Goal_GatherResources : Goal_Base
 {
-    [SerializeField] int Priority = 10;
-
-
+    [SerializeField] float PriorityDecayRate = 0.3f;
+    [SerializeField] int BasePriority = 50;
 
     public override void PreTick()
     {
-        CanRun = true; 
-        Priority = 0;
+        //priority cannot change while running, but the priority will decay overtime.
+        if (IsActive)
+        {
+            Priority -= Mathf.FloorToInt(PriorityDecayRate);
+            return;
+        }
+
+        //can't run if inventory is full
+        if (EntityInfo.IsInventoryFull())
+        {
+            CanRun = false;
+            Priority = 0;
+        } else
+        {
+            CanRun = true;
+            Priority = BasePriority;
+        }
     }
 }

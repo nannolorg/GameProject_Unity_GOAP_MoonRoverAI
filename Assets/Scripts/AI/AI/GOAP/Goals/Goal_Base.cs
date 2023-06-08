@@ -7,7 +7,7 @@ public abstract class Goal_Base : MonoBehaviour
     protected CharacterAgent Agent;
     protected AwarenessSystem Sensors;
     protected EntityInfo EntityInfo;
-
+    protected GOAPBrain AIBrain;
 
     protected Action_Base LinkedAction;
     //protected GOAPUI DebugUI;
@@ -22,6 +22,7 @@ public abstract class Goal_Base : MonoBehaviour
     void Awake()
     {
         Agent = GetComponent<CharacterAgent>();
+        AIBrain = GetComponent<GOAPBrain>();
         Sensors = GetComponent<AwarenessSystem>();
     }
 

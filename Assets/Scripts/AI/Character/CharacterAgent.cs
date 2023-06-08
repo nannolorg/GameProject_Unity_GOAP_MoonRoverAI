@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif // UNITY_EDITOR
+
+
 public enum EOffmeshLinkStatus
 {
     NotStarted,
@@ -23,10 +28,42 @@ public class CharacterAgent : CharacterBase
 
     public bool AtDestination => ReachedDestination;
 
+    //
+    public float CosVisionConeAngle { get; private set; } = 0f;
+    [Header("Animation")]
+    public Animator animator;
+    [Header("Sight")]
+    public float VisionConeRange = 60f;
+    public float VisionConeAngle = 30f;
+    public Color VisionConeColour = new Color(1f, 0f, 0f, 0.25f);
+
+    public Vector3 EyeLocation => transform.position;
+    public Vector3 EyeDirection => transform.forward;
+    [Header("Hearing")]
+    public float HearingRange = 20f;
+    public Color HearingRangeColour = new Color(1f, 1f, 0f, 0.25f);
+    [Header("Proximity")]
+    public float ProximityDetectionRange = 3f;
+    public Color ProximityDetectionColour = new Color(1f, 1f, 1f, 0.25f);
+
+    AwarenessSystem Awareness;
+
+    private Vector3 WalkPoint;
+    public float WalkPointRange = 30f;
+    private bool WalkPointSet = false;
+    private float DistanceThreshold = 1f;
+
     // Start is called before the first frame update
     protected void Start()
     {
         Agent = GetComponent<NavMeshAgent>();
+        //caching the cosine vision angle
+        CosVisionConeAngle = Mathf.Cos(VisionConeAngle * Mathf.Deg2Rad);
+        Awareness = GetComponent<AwarenessSystem>();
+
+        //Get Animator component
+        animator = GetComponent<Animator>();
+        
     }
 
     // Update is called once per frame
@@ -47,9 +84,11 @@ public class CharacterAgent : CharacterBase
             {
                 StartCoroutine(FollowOffmeshLink());
             }
-                
         }
+        animator.SetFloat("Speed", Agent.velocity.magnitude);
     }
+
+    
 
     IEnumerator FollowOffmeshLink()
     {
@@ -81,18 +120,37 @@ public class CharacterAgent : CharacterBase
 
     public Vector3 PickLocationInRange(float range)
     {
-        Vector3 searchLocation = transform.position; 
-        searchLocation += Random.Range(-range, range) * Vector3.forward;
-        searchLocation += Random.Range(-range, range) * Vector3.right;
+        WalkPointSet = false;
+        
+        Vector3 Point = SetRandomDestination();
+        return Point;
+    }
 
-        NavMeshHit hitResult;
-        if (NavMesh.SamplePosition(searchLocation, out hitResult, NearestPointSearchRange, NavMesh.AllAreas))
+    private Vector3 SetRandomDestination()
+    {
+        //1. pick a point
+        float rx = Random.Range(-WalkPointRange, WalkPointRange);
+        float rz = Random.Range(-WalkPointRange, WalkPointRange);
+        WalkPoint = new Vector3(transform.position.x + rx, this.transform.position.y, transform.position.x + rz);
+
+        Agent.SetDestination(WalkPoint);
+
+        
+        Invoke("CheckPointOnPath", 0.2f);
+        return WalkPoint;
+    }
+    private void CheckPointOnPath()
+    {
+        if (Vector3.Distance(Agent.pathEndPosition, WalkPoint) < DistanceThreshold)
         {
-            return hitResult.position;
+            WalkPointSet = true;
         }
-            
+        else
+        {
+            SetRandomDestination();
+        }
 
-        return transform.position;
+
     }
 
     protected virtual void CancelCurrentCommand()
@@ -111,6 +169,10 @@ public class CharacterAgent : CharacterBase
 
         SetDestination(destination);
     }
+    public virtual void StopMovement()
+    {
+        CancelCurrentCommand();
+    }
 
     public virtual void SetDestination(Vector3 destination)
     {
@@ -123,4 +185,82 @@ public class CharacterAgent : CharacterBase
             ReachedDestination = false;
         }
     }
+
+    //=========AWARENESS SYSTEM==============
+    public void ReportCanSee(DetectableTarget seen)
+    {
+
+        Awareness.ReportCanSee(seen);
+        Debug.Log("Can see target");
+    }
+
+    public void ReportCanHear(GameObject source, Vector3 location, EHeardSoundCategory category, float intensity)
+    {
+        Awareness.ReportCanHear(source, location, category, intensity);
+    }
+
+    public void ReportInProximity(DetectableTarget target)
+    {
+        Awareness.ReportInProximity(target);
+        Debug.Log("Target in proximity");
+
+    }
+
+    public void OnSuspicious()
+    {
+
+    }
+
+    public void OnDetected(GameObject target)
+    {
+
+    }
+
+    public void OnFullyDetected(GameObject target)
+    {
+
+    }
+
+    public void OnLostDetect(GameObject target)
+    {
+
+    }
+
+    public void OnLostSuspicion()
+    {
+
+    }
+
+    public void OnFullyLost()
+    {
+
+    }
+
 }
+
+#if UNITY_EDITOR
+[CustomEditor(typeof(CharacterAgent))]
+public class CharacterAgentEditor : Editor
+{
+    public void OnSceneGUI()
+    {
+        var ai = target as CharacterAgent;
+
+        // draw the detectopm range
+        Handles.color = ai.ProximityDetectionColour;
+        Handles.DrawSolidDisc(ai.transform.position, Vector3.up, ai.ProximityDetectionRange);
+
+        // draw the hearing range
+        Handles.color = ai.HearingRangeColour;
+        Handles.DrawSolidDisc(ai.transform.position, Vector3.up, ai.HearingRange);
+
+        // work out the start point of the vision cone
+        Vector3 startPoint = Mathf.Cos(-ai.VisionConeAngle * Mathf.Deg2Rad) * ai.transform.forward +
+                             Mathf.Sin(-ai.VisionConeAngle * Mathf.Deg2Rad) * ai.transform.right;
+
+        // draw the vision cone
+        Handles.color = ai.VisionConeColour;
+        Handles.DrawSolidArc(ai.transform.position, Vector3.up, startPoint, ai.VisionConeAngle * 2f, ai.VisionConeRange);
+    }
+}
+#endif // UNITY_EDITOR

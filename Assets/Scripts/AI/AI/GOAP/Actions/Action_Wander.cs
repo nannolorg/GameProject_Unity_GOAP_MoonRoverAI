@@ -21,7 +21,7 @@ public class Action_Wander : Action_Base
     }
     public override void OnActivate()
     {
-        Vector3 location = Agent.PickLocationInRange(SearchRange);
+        Vector3 location = Agent.PickLocationInRange(SearchRange);  
 
         Agent.MoveTo(location);
     }

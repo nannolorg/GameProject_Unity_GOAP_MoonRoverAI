@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class DetectableTarget : MonoBehaviour
 {
+    public bool IsLocalOnly = false;
     // Start is called before the first frame update
     void Start()
     {
-        DetectableTargetManager.Instance.Register(this);
+        if(!IsLocalOnly)
+            GlobalDetectableTargetManager.Instance.Register(this);
     }
 
     // Update is called once per frame
@@ -18,7 +20,8 @@ public class DetectableTarget : MonoBehaviour
 
     void OnDestroy()
     {
-        if (DetectableTargetManager.Instance != null)
-            DetectableTargetManager.Instance.Deregister(this);
+        
+        if (!IsLocalOnly && GlobalDetectableTargetManager.Instance != null)
+            GlobalDetectableTargetManager.Instance.Deregister(this);
     }
 }
