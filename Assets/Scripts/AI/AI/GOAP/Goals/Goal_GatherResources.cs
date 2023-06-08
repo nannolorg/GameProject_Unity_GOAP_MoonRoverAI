@@ -2,17 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Goal_GatherResources : MonoBehaviour
+public class Goal_GatherResources : Goal_Base
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] int Priority = 10;
 
-    // Update is called once per frame
-    void Update()
+
+
+    public override void PreTick()
     {
-        
+        CanRun = true; 
+        Priority = 0;
     }
 }

@@ -28,7 +28,7 @@ public class Goal_Wander : Goal_Base
             CanRun = ActionTime > WanderCooldownTime;
         }
 
-        Priority = BasePriority;
+        Priority = BasePriority; 
     }
 
     public override void OnActivate()
