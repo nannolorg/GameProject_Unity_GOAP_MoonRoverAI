@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -8,10 +9,10 @@ using UnityEditor;
 
 public class HomeBase : MonoBehaviour
 {
-    [SerializeField] float BaseRadius = 30f;
+    [SerializeField] int BaseRadius = 10;
     public Color ProximityColour = new Color(1f, 1f, 1f, 0.25f);
 
-    [SerializeField] float PerfectKnowledgeRange = 100f;
+    [SerializeField] float PerfectKnowledgeRange = 10f;
     [SerializeField] WorldResource.EType DefaultResource = WorldResource.EType.Samples;
     Dictionary<WorldResource.EType, List<WorldResource>> TrackedResources = null;
     Dictionary<WorldResource.EType, int> ResourcesStored = new Dictionary<WorldResource.EType, int>();
@@ -24,7 +25,9 @@ public class HomeBase : MonoBehaviour
         foreach (var value in resourceTypes)
         {
             ResourcesStored[(WorldResource.EType)value] = 0;
+
         }
+
     }
 
 
@@ -63,13 +66,18 @@ public class HomeBase : MonoBehaviour
         }
     }
 
-    //public WorldResource GetGatherTarget(GOAPBrain AIBrain)
-    //{
-    //    WorldResource.EType targetResource = DefaultResource;
+    public WorldResource GetGatherTarget(GOAPBrain AIBrain)
+    {
+        WorldResource.EType targetResource = DefaultResource;
 
-    //    //find the closest resource to us
-        
-    //}
+        //if (TrackedResources[targetResource].Count == 0)
+        //    return null;
+
+
+        //find the closest resource to us
+        var sortedResources = TrackedResources[targetResource].OrderBy(resource => Vector3.Distance(AIBrain.transform.position, resource.transform.position)).ToList();
+        return sortedResources[Random.Range(0, Mathf.Min(BaseRadius, sortedResources.Count))];
+    }
 
     public void SawResource(WorldResource resource)
     {
@@ -84,6 +92,18 @@ public class HomeBase : MonoBehaviour
     {
         ResourcesStored[type] += amount;
     }
+
+    //public bool IsThereResourcesToCollect()
+    //{
+    //    if (NumAvailableResources <= 0)
+    //    {
+    //        return false;
+    //    }
+    //    else
+    //    {
+    //        return true;
+    //    }
+    //}
 
 
 

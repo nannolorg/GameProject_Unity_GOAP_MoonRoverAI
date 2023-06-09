@@ -13,6 +13,11 @@ public class Action_GatherResources : Action_FSMBase<Action_GatherResources.ESta
         OffloadResource
     }
 
+    [SerializeField] float CollectionTime = 5f;
+    [SerializeField] float StorageTime = 5f;
+    float ActionTimeRemaining = 0f;
+
+    WorldResource Target;
 
     protected override void Initialise()
     {
@@ -28,15 +33,20 @@ public class Action_GatherResources : Action_FSMBase<Action_GatherResources.ESta
         switch(State)
         {
             case EState.PickResource:
+                Target = EntityInfo.Home.GetGatherTarget(AIBrain);
                 break;
             case EState.MoveToResource:
+                Agent.MoveTo(Target.transform.position);
                 break;
             case EState.CollectResource:
+                ActionTimeRemaining = CollectionTime;
                 break;
-            case EState.ReturnHome:
-                break;
-            case EState.OffloadResource:
-                break;
+            //case EState.ReturnHome:
+            //    Agent.MoveTo(EntityInfo.Home.GetRandomPointAroundBase());
+            //    break;
+            //case EState.OffloadResource:
+            //    ActionTimeRemaining = StorageTime;
+            //    break;
         }
     }
 
@@ -45,33 +55,26 @@ public class Action_GatherResources : Action_FSMBase<Action_GatherResources.ESta
         switch (State)
         {
             case EState.PickResource:
-                break;
-            case EState.MoveToResource:
+                if (Target == null)
+                {
+                    Target = EntityInfo.Home.GetGatherTarget(AIBrain);
+                }
                 break;
             case EState.CollectResource:
-                break;
-            case EState.ReturnHome:
-                break;
             case EState.OffloadResource:
+                ActionTimeRemaining -= Time.deltaTime;
                 break;
+            //case EState.ReturnHome:
+
+            //    break;
         }
     }
 
     protected override void Exit()
     {
-        switch (State)
-        {
-            case EState.PickResource:
-                break;
-            case EState.MoveToResource:
-                break;
-            case EState.CollectResource:
-                break;
-            case EState.ReturnHome:
-                break;
-            case EState.OffloadResource:
-                break;
-        }
+
+        Agent.StopMovement();
+        
     }
 
     protected override EState CheckTransition()
@@ -79,15 +82,48 @@ public class Action_GatherResources : Action_FSMBase<Action_GatherResources.ESta
         switch (State)
         {
             case EState.PickResource:
+                if (Target != null)
+                {
+                    return EState.MoveToResource;
+                }else
+                {
+                    HasFinished = true;
+                }
                 break;
             case EState.MoveToResource:
-                break;
+                if (Agent.AtDestination)
+                {
+                    return EState.CollectResource;
+                }
+                break;  
             case EState.CollectResource:
+                Debug.Log(ActionTimeRemaining);
+                if (ActionTimeRemaining <= 0f)
+                {
+                    HasFinished = true;
+                    EntityInfo.AddToInventory(Target.Type, Target.AvailableAmount);
+                    return EState.PickResource;
+                    //return EState.ReturnHome;
+                }
+
+                //check if inventory is full or not
+               
                 break;
-            case EState.ReturnHome:
-                break;
-            case EState.OffloadResource:
-                break;
+            //case EState.ReturnHome:
+            //    Debug.Log(ActionTimeRemaining);
+            //    if (Agent.AtDestination)
+            //    {
+                    
+            //        return EState.OffloadResource;
+            //    }
+            //    break;
+            //case EState.OffloadResource:
+            //    if (ActionTimeRemaining <= 0f)
+            //    {
+            //        EntityInfo.ResetInventory();
+            //        HasFinished = true;
+            //    }
+            //    break;
         }
 
         return State;

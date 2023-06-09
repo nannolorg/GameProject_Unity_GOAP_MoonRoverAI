@@ -5,11 +5,16 @@ using UnityEngine;
 public class EntityInfo : MonoBehaviour
 {
     
-    public HomeBase Home { get; private set; } = null;
-    private Dictionary<WorldResource.EType, int> Inventory;
+    public HomeBase Home { get; set; } = null;
+    private Dictionary<WorldResource.EType, int> Inventory = new Dictionary<WorldResource.EType, int>();
     private float InventoryMaxWeight = 30f; //Weight in kg
     private float SampleItemWeight = 5f;
     private bool bInventoryFull = false;
+
+    void Start()
+    {
+        SetHome(GameObject.FindObjectOfType<HomeBase>());
+    }
 
     public void SetHome(HomeBase _home)
     {
@@ -40,6 +45,29 @@ public class EntityInfo : MonoBehaviour
         }
 
         return bInventoryFull;
+    }
+
+    public void AddToInventory(WorldResource.EType type, int amount)
+    {
+        if (Inventory.ContainsKey(type))
+            Inventory[type] += amount;
+        else
+            Inventory.Add(type, amount);
+    }
+
+    public void ResetInventory()
+    {
+        Inventory.Clear();
+    }
+
+    public void AddInventoryItemsToHome()
+    {
+        foreach (WorldResource.EType type in Inventory.Keys)
+        {
+            var amount = Inventory[type];
+            Home.StoreResource(type, amount);
+        }
+        
     }
   
 }

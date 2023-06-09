@@ -12,8 +12,8 @@ public class WorldResource : MonoBehaviour
         Silicon
     }
     [SerializeField] EType _Type;
-    [SerializeField] int MinAmount = 15;
-    [SerializeField] int MaxAmount = 50;
+    [SerializeField] int MinAmount = 1;
+    [SerializeField] int MaxAmount = 3;
 
     public EType Type => _Type;
     public int AvailableAmount { get; private set; } = 0;

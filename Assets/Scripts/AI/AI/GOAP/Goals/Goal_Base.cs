@@ -24,6 +24,7 @@ public abstract class Goal_Base : MonoBehaviour
         Agent = GetComponent<CharacterAgent>();
         AIBrain = GetComponent<GOAPBrain>();
         Sensors = GetComponent<AwarenessSystem>();
+        EntityInfo = GetComponent<EntityInfo>();
     }
 
     public void SetAction(Action_Base newAction)

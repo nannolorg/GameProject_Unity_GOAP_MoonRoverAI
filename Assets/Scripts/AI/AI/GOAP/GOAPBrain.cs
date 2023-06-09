@@ -27,6 +27,8 @@ public class GOAPBrain : MonoBehaviour
         }
 
         RefreshPlan();
+        //Debug.Log("Action:" + ActiveAction);
+        //Debug.Log("Goal:" + ActiveGoal);
 
         if (ActiveAction != null)
         {

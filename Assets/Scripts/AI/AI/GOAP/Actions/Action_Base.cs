@@ -6,7 +6,7 @@ public abstract class Action_Base : MonoBehaviour
 {
     protected CharacterAgent Agent;
     protected AwarenessSystem Sensors;
-    protected EntityInfo Info;
+    protected EntityInfo EntityInfo;
     protected GOAPBrain AIBrain;
 
     protected Goal_Base LinkedGoal;
@@ -19,6 +19,7 @@ public abstract class Action_Base : MonoBehaviour
         Agent = GetComponent<CharacterAgent>();
         AIBrain = GetComponent<GOAPBrain>();
         Sensors = GetComponent<AwarenessSystem>();
+        EntityInfo = GetComponent<EntityInfo>();
         Initialise();
     }
 

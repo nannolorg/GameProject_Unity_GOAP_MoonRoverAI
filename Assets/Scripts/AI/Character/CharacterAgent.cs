@@ -53,6 +53,8 @@ public class CharacterAgent : CharacterBase
     private bool WalkPointSet = false;
     private float DistanceThreshold = 1f;
 
+    EntityInfo EntityInfo;
+
     // Start is called before the first frame update
     protected void Start()
     {
@@ -63,14 +65,16 @@ public class CharacterAgent : CharacterBase
 
         //Get Animator component
         animator = GetComponent<Animator>();
-        
+        EntityInfo = GetComponent<EntityInfo>();
+
+
     }
 
     // Update is called once per frame
     protected void Update()
     {
         // have a path and near the end point?
-        if (!Agent.pathPending && !Agent.isOnOffMeshLink && DestinationSet && (Agent.remainingDistance <= Agent.stoppingDistance))
+        if (!Agent.pathPending && !Agent.isOnOffMeshLink && DestinationSet && (Agent.remainingDistance <= Agent.stoppingDistance + 3f))
         {
             DestinationSet = false;
             ReachedDestination = true;
@@ -189,9 +193,13 @@ public class CharacterAgent : CharacterBase
     //=========AWARENESS SYSTEM==============
     public void ReportCanSee(DetectableTarget seen)
     {
-
+        WorldResource foundResource;
+        if (seen.transform.TryGetComponent<WorldResource>(out foundResource))
+        {
+            EntityInfo.Home.SawResource(foundResource);
+        }
         Awareness.ReportCanSee(seen);
-        Debug.Log("Can see target");
+        //Debug.Log("Can see target");
     }
 
     public void ReportCanHear(GameObject source, Vector3 location, EHeardSoundCategory category, float intensity)
@@ -202,7 +210,7 @@ public class CharacterAgent : CharacterBase
     public void ReportInProximity(DetectableTarget target)
     {
         Awareness.ReportInProximity(target);
-        Debug.Log("Target in proximity");
+        //Debug.Log("Target in proximity");
 
     }
 
@@ -218,7 +226,11 @@ public class CharacterAgent : CharacterBase
 
     public void OnFullyDetected(GameObject target)
     {
-
+        WorldResource foundResource;
+        if (target.TryGetComponent<WorldResource>(out foundResource))
+        {
+            EntityInfo.Home.SawResource(foundResource);
+        }
     }
 
     public void OnLostDetect(GameObject target)

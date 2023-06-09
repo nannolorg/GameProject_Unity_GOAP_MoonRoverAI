@@ -6,7 +6,7 @@ public class Goal_Wander : Goal_Base
 {
     [SerializeField] float WanderTime = 30f;
     [SerializeField] float WanderCooldownTime = 5f;
-    [SerializeField] int BasePriority = 25;
+    [SerializeField] int BasePriority = 20;
 
     float ActionTime;
 
