@@ -7,8 +7,8 @@ public class GOAPBrain : MonoBehaviour
     Goal_Base[] Goals;
     Action_Base[] Actions;
 
-    Goal_Base ActiveGoal;
-    Action_Base ActiveAction;
+    public Goal_Base ActiveGoal;
+    public Action_Base ActiveAction;
 
 
 
@@ -27,6 +27,10 @@ public class GOAPBrain : MonoBehaviour
         }
 
         RefreshPlan();
+        Debugger.Instance.SetDebugInfo("Action:" + ActiveAction +
+                                       "\nGoal:" + ActiveGoal +
+                                       "\nCurrent Priority:" + ActiveGoal.Priority);
+
         //Debug.Log("Action:" + ActiveAction);
         //Debug.Log("Goal:" + ActiveGoal);
 

@@ -16,13 +16,19 @@ public class Goal_GatherResources : Goal_Base
             return;
         }
 
-        //check if there is any resource to collect
-        //if (!EntityInfo.Home.IsThereResourcesToCollect())
+        //check if there is any resource to collect on our local sensors, if not skip
+        //if (!EntityInfo.Home.HasResourceToGather())
         //{
         //    CanRun = false;
         //    Priority = 0;
         //    return;
         //}
+        if (Sensors.TargetManager.AllTargets.Count == 0)
+        {
+            CanRun = false;
+            Priority = 0;
+            return;
+        }
 
         //can't run if inventory is full
         if (EntityInfo.IsInventoryFull())

@@ -126,8 +126,12 @@ public class CharacterAgent : CharacterBase
     {
         WalkPointSet = false;
         
+        
         Vector3 Point = SetRandomDestination();
         return Point;
+
+
+        
     }
 
     private Vector3 SetRandomDestination()
@@ -139,8 +143,9 @@ public class CharacterAgent : CharacterBase
 
         Agent.SetDestination(WalkPoint);
 
-        
-        Invoke("CheckPointOnPath", 0.2f);
+
+
+        Invoke("CheckPointOnPath", 0.002f);
         return WalkPoint;
     }
     private void CheckPointOnPath()
@@ -153,8 +158,6 @@ public class CharacterAgent : CharacterBase
         {
             SetRandomDestination();
         }
-
-
     }
 
     protected virtual void CancelCurrentCommand()
@@ -199,7 +202,7 @@ public class CharacterAgent : CharacterBase
             EntityInfo.Home.SawResource(foundResource);
         }
         Awareness.ReportCanSee(seen);
-        //Debug.Log("Can see target");
+        //Debug.Log("Can see target"); 
     }
 
     public void ReportCanHear(GameObject source, Vector3 location, EHeardSoundCategory category, float intensity)

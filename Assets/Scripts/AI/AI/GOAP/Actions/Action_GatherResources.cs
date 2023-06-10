@@ -60,6 +60,12 @@ public class Action_GatherResources : Action_FSMBase<Action_GatherResources.ESta
                     Target = EntityInfo.Home.GetGatherTarget(AIBrain);
                 }
                 break;
+            case EState.MoveToResource:
+                if (Target == null)
+                {
+                    HasFinished = true;
+                }
+                break;
             case EState.CollectResource:
             case EState.OffloadResource:
                 ActionTimeRemaining -= Time.deltaTime;
@@ -101,7 +107,10 @@ public class Action_GatherResources : Action_FSMBase<Action_GatherResources.ESta
                 if (ActionTimeRemaining <= 0f)
                 {
                     HasFinished = true;
-                    EntityInfo.AddToInventory(Target.Type, Target.AvailableAmount);
+                    var ResourceToAdd = Target.HarvestAll();
+                    EntityInfo.AddToInventory(Target.Type, ResourceToAdd);
+                    //Make resource depleted
+
                     return EState.PickResource;
                     //return EState.ReturnHome;
                 }

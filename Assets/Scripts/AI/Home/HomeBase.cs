@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using TMPro;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -9,7 +10,7 @@ using UnityEditor;
 
 public class HomeBase : MonoBehaviour
 {
-    [SerializeField] int BaseRadius = 10;
+    [SerializeField] int BaseRadius = 1;
     public Color ProximityColour = new Color(1f, 1f, 1f, 0.25f);
 
     [SerializeField] float PerfectKnowledgeRange = 10f;
@@ -17,7 +18,10 @@ public class HomeBase : MonoBehaviour
     Dictionary<WorldResource.EType, List<WorldResource>> TrackedResources = null;
     Dictionary<WorldResource.EType, int> ResourcesStored = new Dictionary<WorldResource.EType, int>();
     public int NumAvailableResources { get; private set; } = 0;
+    GOAPBrain[] Agents;
 
+    public TextMeshPro countUI;
+    public int ResourceCount;
 
     void Awake()
     {
@@ -25,8 +29,14 @@ public class HomeBase : MonoBehaviour
         foreach (var value in resourceTypes)
         {
             ResourcesStored[(WorldResource.EType)value] = 0;
-
         }
+
+    }
+
+    private void Start()
+    {
+        //Add all agents to homebase
+        Agents = GameObject.FindObjectsOfType<GOAPBrain>();
 
     }
 
@@ -38,6 +48,79 @@ public class HomeBase : MonoBehaviour
         {
             PopulateResources();
         }
+
+        if (TrackedResources != null)
+        {
+            CheckIfResourceDepleted();
+        }
+
+
+
+        countUI.text = ResourceCount.ToString();
+        
+    }
+
+    private void CheckIfResourceDepleted()
+    {
+        //foreach (WorldResource.EType resourceType in TrackedResources.Keys)
+        //{
+        //    //check if resource type dictionary for that resource is 
+        //    if (TrackedResources[resourceType].Count <= 0)
+        //    {
+        //        continue;
+        //    }
+
+
+        //    //destroy resource if resource is depleted
+        //    foreach (WorldResource resource in TrackedResources[resourceType])
+        //    {
+        //        if (resource.CheckIfDepleted())
+        //        {
+        //            //remove from dictionary
+        //            RemoveResource(resource);
+
+
+
+        //            //remove
+        //            resource.DestroySelf();
+        //        }
+        //    }
+
+        //}
+
+
+
+        List<WorldResource> resourcesToRemove = new List<WorldResource>();
+
+        foreach (WorldResource.EType resourceType in TrackedResources.Keys)
+        {
+            // Check if resource type dictionary for that resource is empty
+            if (TrackedResources[resourceType].Count <= 0)
+            {
+                continue;
+            }
+
+            // Destroy resource if it is depleted
+            foreach (WorldResource resource in TrackedResources[resourceType])
+            {
+                if (resource.CheckIfDepleted())
+                {
+                    // Add resource to the removal list
+                    resourcesToRemove.Add(resource);
+                }
+            }
+        }
+
+        // Remove depleted resources from the dictionary and destroy them
+        foreach (WorldResource resourceToRemove in resourcesToRemove)
+        {
+            RemoveResource(resourceToRemove);
+            resourceToRemove.DestroySelf();
+        }
+
+
+
+
     }
 
     public Vector3 GetRandomPointAroundBase()
@@ -49,6 +132,11 @@ public class HomeBase : MonoBehaviour
         Vector3 point = new Vector3(x_pos, this.transform.position.y, z_pos);
 
         return point;
+    }
+
+    public bool HasResourceToGather()
+    {
+        return NumAvailableResources > 0;
     }
 
 
@@ -73,10 +161,19 @@ public class HomeBase : MonoBehaviour
         //if (TrackedResources[targetResource].Count == 0)
         //    return null;
 
-
+        
         //find the closest resource to us
-        var sortedResources = TrackedResources[targetResource].OrderBy(resource => Vector3.Distance(AIBrain.transform.position, resource.transform.position)).ToList();
-        return sortedResources[Random.Range(0, Mathf.Min(BaseRadius, sortedResources.Count))];
+        if (TrackedResources[targetResource].Count != 0)
+        {
+            var sortedResources = TrackedResources[targetResource].OrderBy(resource => Vector3.Distance(AIBrain.transform.position, resource.transform.position)).ToList();
+            return sortedResources[Random.Range(0, Mathf.Min(BaseRadius, sortedResources.Count))];
+
+        }
+        else
+        {
+            return null;
+        }
+        
     }
 
     public void SawResource(WorldResource resource)
@@ -91,6 +188,15 @@ public class HomeBase : MonoBehaviour
     public void StoreResource(WorldResource.EType type, int amount)
     {
         ResourcesStored[type] += amount;
+        ResourceCount += amount;
+    }
+    public void RemoveResource(WorldResource resource)
+    {
+        if (TrackedResources[resource.Type].Contains(resource))
+        {
+            TrackedResources[resource.Type].Remove(resource);
+            --NumAvailableResources;
+        }
     }
 
     //public bool IsThereResourcesToCollect()

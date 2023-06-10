@@ -69,11 +69,13 @@ public class AwarenessSystem : MonoBehaviour
 
     Dictionary<GameObject, TrackedTarget> Targets = new Dictionary<GameObject, TrackedTarget>();
     CharacterAgent LinkedAI;
+    public LocalDetectableTargetManager TargetManager;
 
     // Start is called before the first frame update
     void Start()
     {
         LinkedAI = GetComponent<CharacterAgent>();
+        TargetManager = GetComponent<LocalDetectableTargetManager>();
     }
 
     // Update is called once per frame

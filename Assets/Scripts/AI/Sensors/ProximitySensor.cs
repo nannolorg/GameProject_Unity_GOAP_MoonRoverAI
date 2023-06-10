@@ -19,9 +19,11 @@ public class ProximitySensor : MonoBehaviour
     void Update()
     {
         List<DetectableTarget> targets = TargetManager != null ? TargetManager.AllTargets : GlobalDetectableTargetManager.Instance.AllTargets;
-
         for (int index = 0; index < targets.Count; ++index)
         {
+            if (targets[index] == null)
+                continue;
+
             var candidateTarget = targets[index];
 
             // skip if ourselves
@@ -31,5 +33,7 @@ public class ProximitySensor : MonoBehaviour
             if (Vector3.Distance(LinkedAI.EyeLocation, candidateTarget.transform.position) <= LinkedAI.ProximityDetectionRange)
                 LinkedAI.ReportInProximity(candidateTarget);
         }
+
+        
     }
 }

@@ -12,10 +12,12 @@ public class WorldResource : MonoBehaviour
         Silicon
     }
     [SerializeField] EType _Type;
-    [SerializeField] int MinAmount = 1;
-    [SerializeField] int MaxAmount = 3;
+    [SerializeField] int MinAmount = 6;
+    [SerializeField] int MaxAmount = 7;
+
 
     public EType Type => _Type;
+
     public int AvailableAmount { get; private set; } = 0;
 
     // Start is called before the first frame update
@@ -30,4 +32,24 @@ public class WorldResource : MonoBehaviour
     {
 
     }
+
+    public bool CheckIfDepleted()
+    {
+        return AvailableAmount == 0;
+    }
+
+    public int HarvestAll()
+    {
+        var HarvestedAmount = AvailableAmount;
+        AvailableAmount = 0;
+
+        return HarvestedAmount;
+    }
+    
+    public void DestroySelf()
+    {
+        Destroy(transform.gameObject);
+    }
+
+
 }

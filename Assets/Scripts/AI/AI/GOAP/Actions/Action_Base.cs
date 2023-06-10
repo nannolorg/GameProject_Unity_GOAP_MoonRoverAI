@@ -29,4 +29,8 @@ public abstract class Action_Base : MonoBehaviour
     public abstract void OnActivate();
     public abstract void OnDeactivate();
     public abstract void OnTick();
+    public virtual string GetDebugInfo()
+    {
+        return string.Empty;
+    }
 }
