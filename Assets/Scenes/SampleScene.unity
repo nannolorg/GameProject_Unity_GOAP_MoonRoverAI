@@ -528,7 +528,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 127888331}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -18.15, y: 0.14, z: -42.68}
+  m_LocalPosition: {x: -47.2, y: 0.14, z: -17.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1765,11 +1765,11 @@ MonoBehaviour:
   animator: {fileID: 0}
   VisionConeRange: 38.8
   VisionConeAngle: 67.2
-  VisionConeColour: {r: 1, g: 0.6273585, b: 0.6273585, a: 0.03529412}
+  VisionConeColour: {r: 1, g: 0.6273585, b: 0.6273585, a: 0}
   HearingRange: 20
   HearingRangeColour: {r: 1, g: 1, b: 0, a: 0}
   ProximityDetectionRange: 30
-  ProximityDetectionColour: {r: 1, g: 1, b: 1, a: 0.16862746}
+  ProximityDetectionColour: {r: 1, g: 1, b: 1, a: 0}
   WalkPointRange: 50
 --- !u!114 &740527707
 MonoBehaviour:
@@ -3426,7 +3426,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1456073069}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 39.4, y: -0.85, z: -3.1}
+  m_LocalPosition: {x: 26.77, y: -0.85, z: 7.14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
